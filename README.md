@@ -6,31 +6,35 @@ A parameterizable Synchronous FIFO designed in Verilog (IEEE 1364-2001) featurin
 * **Parameterized Depth & Width:** Scalable data width and memory depth.
 * **Full & Empty Flags:** Utilizes extra MSB lap-counter logic to distinguish full/empty states without losing memory capacity.
 * **Producer/Consumer Handshake:** Integrates Module A (Producer) and Module B (Consumer) to simulate real-world data flow.
+
 ## System Architecture Block Diagram
 
 ```mermaid
-graph LR
-    subgraph System ["sync_fifo_system"]
+flowchart LR
+    %% Custom Styles
+    classDef fifoClass fill:#1e40af,stroke:#60a5fa,stroke-width:2px,color:#ffffff;
+    classDef modClass fill:#065f46,stroke:#34d399,stroke-width:2px,color:#ffffff;
+    classDef globalClass fill:#334155,stroke:#94a3b8,color:#f8fafc;
+
+    subgraph TopLevel ["sync_fifo_system (Top-Level Wrapper)"]
         direction LR
-        
-        A["Producer Module A<br/>(producer_mod_a)"]
-        FIFO["Synchronous FIFO<br/>(sync_fifo)<br/>8x8 Depth/Width"]
-        B["Consumer Module B<br/>(consumer_mod_b)"]
 
-        A -- "wr_en" --> FIFO
-        A -- "d_in [7:0]" --> FIFO
-        FIFO -- "full" --> A
+        A["<b>Producer</b><br/>(modA.v)"]:::modClass
+        FIFO["<b>Synchronous FIFO</b><br/>(fifo.v)<br/><i>8x8 Bit Depth & Width</i>"]:::fifoClass
+        B["<b>Consumer</b><br/>(modB.v)"]:::modClass
 
-        FIFO -- "empty" --> B
-        B -- "rd_en" --> FIFO
-        FIFO -- "d_out [7:0]" --> B
-        B -- "rx_data [7:0]" --> Internal["Internal Logic"]
+        %% Multi-bit Data Buses (Thick Lines)
+        A == "d_in [7:0]" ==> FIFO
+        FIFO == "d_out [7:0]" ==> B
+
+        %% Control & Flag Signals
+        A -->|"wr_en"| FIFO
+        FIFO -.->|"full"| A
+
+        B -->|"rd_en"| FIFO
+        FIFO -.->|"empty"| B
     end
 
-    CLK(["clk"]) --> A
-    CLK --> FIFO
-    CLK --> B
-
-    RST(["rst"]) --> A
-    RST --> FIFO
-    RST --> B
+    %% Global Inputs
+    CLK(["clk"]):::globalClass --> TopLevel
+    RST(["rst"]):::globalClass --> TopLevel
