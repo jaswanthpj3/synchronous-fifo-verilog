@@ -6,7 +6,35 @@ A parameterizable Synchronous FIFO designed in Verilog (IEEE 1364-2001) featurin
 * **Parameterized Depth & Width:** Scalable data width and memory depth.
 * **Full & Empty Flags:** Utilizes extra MSB lap-counter logic to distinguish full/empty states without losing memory capacity.
 * **Producer/Consumer Handshake:** Integrates Module A (Producer) and Module B (Consumer) to simulate real-world data flow.
+## System Architecture Block Diagram
 
+```mermaid
+graph LR
+    subgraph System ["sync_fifo_system"]
+        direction LR
+        
+        A["<b>Producer Module A</b><br/>(producer_mod_a)"]
+        FIFO["<b>Synchronous FIFO</b><br/>(sync_fifo)<br/>8x8 Depth/Width"]
+        B["<b>Consumer Module B</b><br/>(consumer_mod_b)"]
+
+        %% Control and Data Connections
+        A -- "wr_en" --> FIFO
+        A -- "d_in [7:0]" --> FIFO
+        FIFO -- "full" --> A
+
+        FIFO -- "empty" --> B
+        B -- "rd_en" --> FIFO
+        FIFO -- "d_out [7:0]" --> B
+        B -- "rx_data [7:0]" --> Internal["Internal Logic"]
+    end
+
+    CLK(["clk"]) --> A
+    CLK --> FIFO
+    CLK --> B
+
+    RST(["rst"]) --> A
+    RST --> FIFO
+    RST --> B
 ## Simulation Setup
 Tested on Ubuntu 22.04 using **Icarus Verilog** and **GTKWave**.
 
