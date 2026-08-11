@@ -13,11 +13,10 @@ graph LR
     subgraph System ["sync_fifo_system"]
         direction LR
         
-        A["<b>Producer Module A</b><br/>(producer_mod_a)"]
-        FIFO["<b>Synchronous FIFO</b><br/>(sync_fifo)<br/>8x8 Depth/Width"]
-        B["<b>Consumer Module B</b><br/>(consumer_mod_b)"]
+        A["Producer Module A<br/>(producer_mod_a)"]
+        FIFO["Synchronous FIFO<br/>(sync_fifo)<br/>8x8 Depth/Width"]
+        B["Consumer Module B<br/>(consumer_mod_b)"]
 
-        %% Control and Data Connections
         A -- "wr_en" --> FIFO
         A -- "d_in [7:0]" --> FIFO
         FIFO -- "full" --> A
