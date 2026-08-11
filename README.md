@@ -33,7 +33,7 @@ graph LR
 
     RST(["rst"]) --> A
     RST --> FIFO
-    RST --> B
+    RST --> B```
 ## Simulation Setup
 Tested on Ubuntu 22.04 using **Icarus Verilog** and **GTKWave**.
 
@@ -45,4 +45,4 @@ iverilog -o fifo_sim tb_toplvl.v toplvl.v fifo.v modA.v modB.v
 vvp fifo_sim
 
 # View waveform
-gtkwave waveform.vcd &
+gtkwave waveform.vcd &```
